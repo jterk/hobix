@@ -22,7 +22,7 @@ require 'hobix/storage/lockfile'
 module Hobix
 
 #
-# The IndexEntry class 
+# The IndexEntry class
 #
 class IndexEntry < BaseContent
     def initialize( entry, fields = self.class.properties.keys )
@@ -91,9 +91,10 @@ class FileSys < Hobix::BaseStorage
         e.created ||= (@index.has_key?( id ) ? @index[id].created : now)
         path = entry_path( id )
 
-        unless create_category and File.exists? @basepath
+        if create_category and !File.exists?(File.dirname(path))
             FileUtils.makedirs File.dirname( path )
         end
+
         Lockfile.new( path + ".lock" ) do
             File.open( path, 'w' ) { |f| YAML::dump( e, f ) }
         end
@@ -149,7 +150,7 @@ class FileSys < Hobix::BaseStorage
     # end
 
     # Determines if the search engine has already scanned an entry represented by IndexEntry +ie+.
-    # def search_needs_update? ie 
+    # def search_needs_update? ie
     #     not @search_index.has_entry? ie.id, ie.modified
     # end
 
@@ -381,7 +382,7 @@ class FileSys < Hobix::BaseStorage
         @attach_cache ||= {}
         file_id = "#{ id }.#{ ext }"
         unless @attach_cache.has_key? file_id
-            @attach_cache[id] = File.open( entry_path( id, ext ) ) do |f| 
+            @attach_cache[id] = File.open( entry_path( id, ext ) ) do |f|
                 YAML::load( f )
             end
         else
