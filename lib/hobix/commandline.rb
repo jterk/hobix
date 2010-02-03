@@ -29,7 +29,7 @@ module CommandLine
     ].each do |home_top, home_dir|
         next unless home_top
         if File.exists? home_top
-            File.makedirs( home_dir )
+            FileUtils.mkdir_p( home_dir )
             HOME_DIR = home_dir
             break
         end
@@ -458,10 +458,15 @@ module CommandLine
         [['name', 'Your real name', true], 
          ['url', 'URL to your home page', false],
          ['email', 'Your e-mail address', false]].each do |k, txt, req|
-            print "#{ txt }: "
-            val = gets.strip
-            retry if req and val.empty?
-            @config['personal'][k] = val
+            begin
+              print "#{ txt }: "
+              val = gets.strip
+              raise "Empty Value" if req and val.empty?
+              @config['personal'][k] = val
+            rescue
+              # Try again.
+              retry
+            end
         end
         save_config
     end
