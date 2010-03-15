@@ -350,7 +350,7 @@ unless defined? $__lockfile__
             trace{"loaded <\n#{ loaded.inspect }\n>"}
             raise unless loaded == @lock_id 
           rescue => e
-            trace{errmsg e}
+            trace{errmsg e}            
             thread.raise StolenLockError
             Thread::exit
           end
@@ -438,7 +438,8 @@ unless defined? $__lockfile__
 #--{{{
       lock_id = {}
       kv = %r/([^:]+):(.*)/o
-      buf.each do |line|
+      
+      buf.each_line do |line|
         m = kv.match line
         k, v = m[1], m[2]
         next unless m and k and v 
