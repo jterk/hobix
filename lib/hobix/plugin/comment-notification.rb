@@ -46,7 +46,7 @@ Hey there #{author['name']},
 
 Someone going by the name #{comment.author} (IP Address: #{comment.ipaddress}) just posted a comment to the entry #{entry_id} (#{url}):
 
-#{comment.to_s}
+#{comment.content}
 
 - Your friendly neighborhood email notifier.
 END_OF_MESSAGE
