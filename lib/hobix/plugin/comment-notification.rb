@@ -33,7 +33,7 @@ module Hobix
     def self.notify(weblog, entry_id, comment)
       # Build a link to the entry.
       link = weblog.output_entry_map[entry_id]
-      url = weblog.expand_path( link[:page].link )
+      url = weblog.link.to_s.gsub(/\/*$/, '') + weblog.expand_path(link[:page].link)
 
       weblog.authors.each_value do |author|
         email = <<END_OF_MESSAGE
@@ -44,8 +44,9 @@ Date: #{comment.created.rfc2822}
 
 Hey there #{author['name']},
 
-Someone going by the name #{comment.author} (IP Address: #{comment.ipaddress},
-Email Address:#{comment.email}) just posted a comment to the entry <a href="#{url}">#{entry_id}</a>.
+Someone going by the name #{comment.author} (IP Address: #{comment.ipaddress}) just posted a comment to the entry #{entry_id} (#{url}):
+
+#{comment.to_s}
 
 - Your friendly neighborhood email notifier.
 END_OF_MESSAGE
